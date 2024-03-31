@@ -28,7 +28,7 @@ export class User {
     @Column()
     profile_description: string
 
-    @OneToMany(() => Threads, (threads) => threads.user)
+    @OneToMany(() => Threads, (threads) => threads.user, {cascade: true})
     threads: Threads[]
 
     @OneToMany(() => Replies, (replies) => replies.user)

@@ -1,30 +1,38 @@
 import { AppDataSource } from "./data-source"
 import * as express from "express"
 import { Request, Response } from "express"
-import ThreadsControllers from "./controllers/ThreadsControllers"
+import * as cors from "cors"
+import Route from "./routes"
+import * as path from 'path'
+
 
 AppDataSource.initialize().then(async () => {
     const app = express()
     const port = 5000
 
-    const router = express.Router()
+
+    const corsConfig: object = {
+        "origin" : "*",
+        "methods" : "GET, HEAD, PUT, PATCH, DELETE, POST",
+        "preflightContinue" : false,
+        "optionsSuccessStatus" : 204,
+    }
+
+
+    app.use(cors(corsConfig))
+
 
     app.use(express.json())
-    app.use("/api/v1", router)
+    app.use("/api/v1", Route)
+
+    app.use('/api/v1/src/assets/', express.static(path.join(__dirname, 'assets')))
 
     app.get("/", (req : Request, res: Response) => {
         res.send('Hello World')
     })
-    router.get("/", (req : Request, res: Response) => {
+    Route.get("/", (req : Request, res: Response) => {
         res.send('Hello World V1')
     })
-
-    // Threads
-    router.get("/threads" , ThreadsControllers.find)
-    router.get("/threads/:id" , ThreadsControllers.findById)
-    router.post("/threads" , ThreadsControllers.create)
-    router.patch("/threads/:id" , ThreadsControllers.update)
-    router.delete("/threads/:id" , ThreadsControllers.delete)
 
     app.listen (port, () => {
         console.log(`Server Success on port ${port}`)

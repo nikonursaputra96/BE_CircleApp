@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm"
 import { User } from "./User"
 import { Likes } from "./Likes"
 import { Replies } from "./Replies"
@@ -19,6 +19,7 @@ export class Threads {
     posted_at: Date
 
     @ManyToOne (() => User , (user) => user.threads)
+    @JoinColumn()
     user : User
 
     @OneToMany (() => Likes, (likes) => likes.threads)
