@@ -4,7 +4,7 @@ export const ThreadsValidator = Joi.object ({
     content : Joi.string().required(),
     image : Joi.string().optional().allow(null),
     posted_at: Joi.string().optional().allow(null),
-    userId: Joi.number()
+    userId: Joi.number().required()
     
 })
 
@@ -20,6 +20,19 @@ export const UserValidator = Joi.object ({
 export const RepliesValidator = Joi.object ({
     content: Joi.string().required(),
     image: Joi.string().optional().allow(null),
-    userId:Joi.string().optional().allow(null),
-    threadsId:Joi.string().optional().allow(null),
+    userId:Joi.number().required(),
+    threadsId:Joi.number().required(),
 })
+
+export const registerSchema = Joi.object ({
+    username: Joi.string().min(8).required(),
+    fullname: Joi.string().required(),
+    email : Joi.string().required(),
+    password : Joi.string().required(),
+})
+
+export const loginSchema = Joi.object ({
+    email : Joi.string().required(),
+    password : Joi.string().required(),
+})
+

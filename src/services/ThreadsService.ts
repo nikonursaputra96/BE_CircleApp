@@ -12,13 +12,11 @@ class ThreadsService {
         try {
 
             const imagePath = imageFile ?  imageFile.filename : ''
-            console.log(imagePath,  '------image path')
             const newThread = this.threadsRepository.create({
                 content: reqBody.content,
                 image: imagePath,
                 user: {id: reqBody.userId}
             });
-            console.log(newThread, '------new thread')
             const response = await this.threadsRepository.save(newThread)
       
             return response

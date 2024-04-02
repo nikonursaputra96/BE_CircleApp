@@ -22,16 +22,16 @@ export class User {
     @Column()
     password: string
 
-    @Column()
+    @Column({nullable: true})
     profile_picture: string
 
-    @Column()
+    @Column({nullable: true})
     profile_description: string
 
     @OneToMany(() => Threads, (threads) => threads.user, {cascade: true})
     threads: Threads[]
 
-    @OneToMany(() => Replies, (replies) => replies.user)
+    @OneToMany(() => Replies, (replies) => replies.user, {cascade: true})
     replies : Replies[]
 
     @OneToMany(() => Likes, (likes) => likes.user)

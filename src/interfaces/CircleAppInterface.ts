@@ -10,6 +10,23 @@ export interface IUser {
     fullname: string;
     email : string;
     password : string;
-    profile_picture : string;
-    profile_description : string;
+    profile_picture? : string;
+    profile_description? : string;
+}
+
+export interface IRegister {
+    username: string;
+    fullname: string;
+    email : string;
+    password : string;
+}
+
+export interface IReply {
+    id: number;
+    content: string;
+    image?: string;
+    userId?: number;
+    threadsId?: number;
+    posted_at?: Date;
+
 }

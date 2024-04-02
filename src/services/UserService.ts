@@ -79,6 +79,16 @@ class UserService {
             throw error
         }
     }
+
+    // getUser email for Auth
+    async getUser(email:string) : Promise <any> {
+        try {
+            const response = await this.UserRepository.findOne({where: {email}})
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default new UserService()

@@ -1,105 +1,103 @@
 import { Repository } from "typeorm";
 import { Replies } from "../entity/Replies";
 import { AppDataSource } from "../data-source";
-import { Request, Response } from "express";
-import { RepliesValidator } from "../utils/validator/CircleAppValidator";
+import { IReply } from "../interfaces/CircleAppInterface";
 
 class RepliesService {
     private readonly RepliesRepository:Repository<Replies> = 
     AppDataSource.getRepository(Replies)
 
-    async create (req : Request, res: Response) {
+    async create (reqBody:IReply) : Promise<Replies> {
         try {
-            const {data}= req.body
-            const {error, value} = RepliesValidator.validate(data)
-            if(error) return res.status(400).json({message : error.details[0].message})
+            const newReply = this.RepliesRepository.create({
+                content: reqBody.content,
+                image: reqBody.image,
+                user: {id: reqBody.userId},
+                threads: {id: reqBody.threadsId}
+            })
 
-            const response = await this.RepliesRepository.save(value)
+    
+            const response = await this.RepliesRepository.save(newReply)
 
-            return res.status(200).json({message: "Replies Created !!" , response})
+            return response
+          
         } catch (error) {
-            return res.status(500).json({error: error})
+            throw error
         }
     }
 
 
-    async find (req: Request, res: Response) {
+    async find () : Promise<IReply[]> {
         try {
-            const threads = await this.RepliesRepository.find();
-            return res.status(200).json(Replies)
-        } catch (error) {
-            return res.status(500).json({error: error})
-        }
-    }
-
-    async findById (req: Request, res: Response) {
-        try {
-            const id = req.params.id
-            const find = await this.RepliesRepository.findOne({
-                where: {
-                    id:Number(id)
+            const data = await this.RepliesRepository.find({
+                relations: ['user', 'threads'],
+                order: {
+                    id: 'DESC'
                 }
-            });
+            })
+
+            return data
+        } catch (error) {
+           throw error
+        }
+    }
+
+    async findById (id: number) {
+        try {
+            const find = await this.RepliesRepository.findOne({where: {id:Number(id)}});
 
             if(!find) {
-                return res.status(404).send({error : "Replies not found !"})
+                throw new Error("Replies not found !")
             }
 
-            return res.status(200).json(find)
+            return find
         } catch (error) {
-            return res.status(500).json({error: error})
+            throw error
         }
     }
 
-    async update (req: Request, res: Response) {
+    async update (reqBody: IReply, id:number) {
         try {
-            const {content,image} = req.body
-            const id = req.params.id
+            const data = await this.RepliesRepository.findOne({where: {id:Number(id)}});
+            const {content,image} = reqBody
 
-            const threads = await this.RepliesRepository.findOne({
-                where: {
-                    id : Number(id),
-                },
-            })
-
-            if (!threads) {
-                return res.status(404).send({error : "Replies not found !"})
-            }
-            if(image != '') {
-                threads.image = image
-            }
-        
-            if(content != '') {
-                threads.content = content
-            }
+            if (!data) throw new Error ( "Replies not found !")
+            if(image != '') data.image = image
+            if(content != '') data.content = content
             
-            const response = await this.RepliesRepository.save(threads)
+            const update = await this.RepliesRepository.save(data)
 
-            return res.status(200).json({message:"Replies Updated!" ,response})
+            return update
         } catch (error) {
-            return res.status(500).json({error : error})
+            throw error
         }
     }
 
-    async delete (req: Request, res: Response) {
+    async delete (id:number) {
         try {
-            const id = req.params.id
+            const data = await this.RepliesRepository.findOne({where: {id:Number(id)}});
+            if (!data) throw new Error ("Replies not found !")
 
-            const threads = await this.RepliesRepository.findOne({
-                where: {
-                    id : Number(id),
-                },
+            const response = await this.RepliesRepository.delete(data)
+
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async repliesByThreadId  (threadId:number, limit: number = 25): Promise<IReply[]>  {
+        try {
+            const replies = await this.RepliesRepository.find({
+                where: {threads: {id: threadId}},
+                relations: ['user', 'threads'],
+                order: {posted_at : 'DESC'},
+                take: limit
             })
 
-            if (!threads) {
-                return res.status(404).send({error : "Replies not found !"})
-            }
-      
-            const response = await this.RepliesRepository.delete({id:Number (id)})
-
-            return res.status(200).json({message:"Success Delete Data!"})
+            return replies
         } catch (error) {
-            return res.status(500).json({error : error})
+            throw error
         }
     }
 }
