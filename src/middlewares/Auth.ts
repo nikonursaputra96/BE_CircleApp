@@ -6,7 +6,7 @@ class AuthenticationMiddleware {
     Auth(req: Request, res: Response, next: NextFunction) : Response {
         try {
             const authorizationHeaders = req.headers.authorization
-            if(authorizationHeaders || !authorizationHeaders.startsWith("Bearer"))
+            if(!authorizationHeaders || !authorizationHeaders.startsWith("Bearer"))
             return res.status(401).json({message : 'unauthorized / token is not valid'})
 
             const token = authorizationHeaders.split (" ")[1]

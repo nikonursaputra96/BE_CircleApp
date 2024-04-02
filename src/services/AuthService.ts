@@ -36,7 +36,11 @@ class AuthService {
 
     async check(reqBody:any) : Promise<any> {
         try {
-           console.log(reqBody)
+           const user = await this.UserRepository.findOne({
+                where: {id: reqBody.id}
+           })
+
+           return user
         } catch (error) {
             throw error
         }
