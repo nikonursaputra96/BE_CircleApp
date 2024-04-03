@@ -7,8 +7,9 @@ import { uploadImage } from "../utils/validator/upload";
 class ThreadsControllers {
     async create(req: Request, res: Response) {
         try {
-            uploadImage.single('image')(req, res, async (err:any) => {
-            const dataThreads = req.body
+             uploadImage.single('image')(req, res, async (err:any) => {
+            const dataThreads =  req.body
+            const loginSession = res.locals.loginSession
             const {error, value} = ThreadsValidator.validate(dataThreads)
             if(error) return res.status(400).json({message : error.details[0].message})
                 if (err) {
@@ -16,7 +17,7 @@ class ThreadsControllers {
                 }
 
 
-                const response = await ThreadsService.create(value, req.file)
+                const response = await ThreadsService.create(value, req.file, loginSession)
  
                 return res.status(200).json({message : 'Threads Created!',response})
             })

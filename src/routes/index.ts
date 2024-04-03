@@ -12,7 +12,7 @@ const Route = express.Router()
     // Threads
     Route.get("/threads" , ThreadsControllers.find)
     Route.get("/threads/:id" , ThreadsControllers.findById)
-    Route.post("/threads" , ThreadsControllers.create)
+    Route.post("/threads" ,  AuthenticationMiddleware.Auth, ThreadsControllers.create)
     Route.patch("/threads/:id" , ThreadsControllers.update)
     Route.delete("/threads/:id" , ThreadsControllers.delete)
     // User
@@ -25,7 +25,7 @@ const Route = express.Router()
     Route.get("/replies" , RepliesController.find)
     Route.get("/replies/:id" , RepliesController.findById)
     Route.get("/threads/:id/replies" , RepliesController.repliesByThreadId)
-    Route.post("/replies" , RepliesController.create)
+    Route.post("/replies" , AuthenticationMiddleware.Auth, RepliesController.create)
     Route.patch("/replies/:id" , RepliesController.update)
     Route.delete("/replies/:id" , RepliesController.delete)
 

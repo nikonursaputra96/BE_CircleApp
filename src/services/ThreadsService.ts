@@ -8,14 +8,14 @@ class ThreadsService {
     private readonly threadsRepository: Repository<Threads> =
     AppDataSource.getRepository(Threads)
 
-    async create (reqBody:IThreads, imageFile: Express.Multer.File): Promise<Threads> {
+    async create (reqBody:IThreads, imageFile: Express.Multer.File, loginSession:any): Promise<Threads> {
         try {
 
             const imagePath = imageFile ?  imageFile.filename : ''
             const newThread = this.threadsRepository.create({
                 content: reqBody.content,
                 image: imagePath,
-                user: {id: reqBody.userId}
+                user: {id: loginSession.id}
             });
             const response = await this.threadsRepository.save(newThread)
       

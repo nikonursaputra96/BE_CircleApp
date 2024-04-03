@@ -1,6 +1,6 @@
 export interface IThreads {
     content: string;
-    image?: string;
+    image?: string | null;
     posted_at?: Date;
     userId: number;
 }
@@ -24,7 +24,7 @@ export interface IRegister {
 export interface IReply {
     id: number;
     content: string;
-    image?: string;
+    image?: string | null;
     userId?: number;
     threadsId?: number;
     posted_at?: Date;

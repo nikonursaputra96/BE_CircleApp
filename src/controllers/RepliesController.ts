@@ -7,6 +7,8 @@ class RepliesController {
     async create(req: Request, res: Response) {
         try {
             const dataReply = req.body
+    
+
             const {error, value} = RepliesValidator.validate(dataReply)
             if(error) return res.status(400).json({message : error.details[0].message})
     
