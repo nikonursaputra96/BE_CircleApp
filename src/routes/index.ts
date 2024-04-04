@@ -4,15 +4,21 @@ import UserController from "../controllers/UserController"
 import RepliesController from "../controllers/RepliesController"
 import AuthController from "../controllers/AuthController"
 import AuthenticationMiddleware from "../middlewares/Auth"
+import { upload } from "../middlewares/Upload"
+import {v2 as cloudinary} from "cloudinary"
 
 const Route = express.Router()
 
-
+    cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+    })
 
     // Threads
     Route.get("/threads" , ThreadsControllers.find)
     Route.get("/threads/:id" , ThreadsControllers.findById)
-    Route.post("/threads" ,  AuthenticationMiddleware.Auth, ThreadsControllers.create)
+    Route.post("/threads" ,upload('image') , AuthenticationMiddleware.Auth, ThreadsControllers.create)
     Route.patch("/threads/:id" , ThreadsControllers.update)
     Route.delete("/threads/:id" , ThreadsControllers.delete)
     // User

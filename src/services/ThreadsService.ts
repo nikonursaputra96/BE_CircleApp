@@ -2,23 +2,22 @@ import { Repository } from "typeorm";
 import { Threads } from "../entity/Threads";
 import { AppDataSource } from "../data-source";
 import { IThreads } from "../interfaces/CircleAppInterface";
-import * as path from 'path'
+
 
 class ThreadsService {
     private readonly threadsRepository: Repository<Threads> =
     AppDataSource.getRepository(Threads)
 
-    async create (reqBody:IThreads, imageFile: Express.Multer.File, loginSession:any): Promise<Threads> {
+    async create (reqBody:IThreads, image:string, loginSession:any): Promise<Threads> {
         try {
-
-            const imagePath = imageFile ?  imageFile.filename : ''
+            
             const newThread = this.threadsRepository.create({
                 content: reqBody.content,
-                image: imagePath,
+                image: image,
                 user: {id: loginSession.id}
             });
             const response = await this.threadsRepository.save(newThread)
-      
+   
             return response
         } catch (error) {
              throw error

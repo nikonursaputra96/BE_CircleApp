@@ -2,26 +2,26 @@ import { Request, Response } from "express";
 import ThreadsService from "../services/ThreadsService";
 import { ThreadsValidator, UserValidator } from "../utils/validator/CircleAppValidator";
 import { IThreads } from "../interfaces/CircleAppInterface";
-import { uploadImage } from "../utils/validator/upload";
+import {v2 as cloudinary} from "cloudinary"
 
 class ThreadsControllers {
     async create(req: Request, res: Response) {
         try {
-             uploadImage.single('image')(req, res, async (err:any) => {
+            
+            const image = res.locals.filename
             const dataThreads =  req.body
+            
             const loginSession = res.locals.loginSession
             const {error, value} = ThreadsValidator.validate(dataThreads)
             if(error) return res.status(400).json({message : error.details[0].message})
-                if (err) {
-                    return res.status(500).json({message: 'failed upload image'})
-                }
-
-
-                const response = await ThreadsService.create(value, req.file, loginSession)
+            
+            const cloudinaryResponse = await cloudinary.uploader.upload("src/assets/" + image)
+            const imageURL = cloudinaryResponse.secure_url
+       
+            const response = await ThreadsService.create(value, imageURL, loginSession)
  
-                return res.status(200).json({message : 'Threads Created!',response})
-            })
-
+            return res.status(200).json({message : 'Threads Created!',response})
+       
 
         } catch (error) {
             return res.status(500).json({message: error})
