@@ -4,6 +4,8 @@ import { Request, Response } from "express"
 import * as cors from "cors"
 import Route from "./routes"
 import * as path from 'path'
+import workers from "./workers"
+import EventEmitter = require("events")
 
 
 AppDataSource.initialize().then(async () => {
@@ -34,8 +36,33 @@ AppDataSource.initialize().then(async () => {
         res.send('Hello World V1')
     })
 
+// SSE (Server Sent Event)
+    const eventEmitter = new EventEmitter();
+
+    Route.get("/notifications", (req: Request, res: Response) => {
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Connection", "keep-alive");
+
+      eventEmitter.on("message", (data) => {
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      });
+    });
+
+    Route.get("/new-thread", (req: Request, res: Response) => {
+      const newThread = { message: "New thread!" };
+
+      eventEmitter.emit("message", newThread);
+
+      res.sendStatus(200);
+    });
+
+// ..........................................
+
     app.listen (port, () => {
         console.log(`Server Success on port ${port}`)
     })
+
+    workers
 
 }).catch(error => console.log(error))
