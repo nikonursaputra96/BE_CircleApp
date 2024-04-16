@@ -1,7 +1,7 @@
 import * as amqp from "amqplib"
 
 class RabbitMQ {
-    sendToQueue = async (queueName : string, payload: any) => {
+    sendToQueue = async (queueName : string, payload: any ) => {
         const connection = await amqp.connect("amqp://localhost")
         const channel = await connection.createChannel()
 

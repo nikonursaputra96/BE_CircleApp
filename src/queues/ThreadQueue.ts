@@ -7,6 +7,8 @@ import { ThreadsValidator } from "../utils/validator/CircleAppValidator";
 class ThreadQueue {
     async create (req:Request, res:Response) {
         try {
+
+ 
             const image = res.locals.filename
             const dataThreads =  req.body
             const loginSession = res.locals.loginSession

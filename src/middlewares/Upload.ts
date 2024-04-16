@@ -22,7 +22,12 @@ export const upload = (fieldName : string) => {
                 return res.status(400).json({err : 'Error upload image!'})
             }
 
-            res.locals.filename = req.file.filename
+            if(!req.file) {
+                res.locals.filename = undefined
+            } else {
+                res.locals.filename = req.file.filename
+            }
+
             next()
 
         })

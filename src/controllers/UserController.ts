@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import UserService from "../services/UserService";
 import { UserValidator } from "../utils/validator/CircleAppValidator";
 import { IUser } from "../interfaces/CircleAppInterface";
+import {v2 as cloudinary} from "cloudinary"
 
 class UserController {
     async create(req: Request, res: Response) {
@@ -30,9 +31,14 @@ class UserController {
 
     async update(req: Request, res: Response) {
         try {
+            const image = res.locals.filename
             const id = Number(req.params.id)
             const data:IUser = req.body
-            const updateData = await UserService.update(id,data)
+
+            const cloudinaryResponse = await cloudinary.uploader.upload("src/assets/" + image)
+            const imageURL = cloudinaryResponse.secure_url
+
+            const updateData = await UserService.update(id,data,imageURL)
             return res.status(200).json(updateData)
         } catch (error) {
             return res.status(500).json({message : error})

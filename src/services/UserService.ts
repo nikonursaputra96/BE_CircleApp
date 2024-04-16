@@ -41,7 +41,7 @@ class UserService {
         }
     }
 
-    async update (id: number , reqBody: IUser ) {
+    async update (id: number , reqBody: IUser, image:string ) {
         try {
             const user = await this.UserRepository.findOne({where: {id : Number(id)}
             })
@@ -54,7 +54,7 @@ class UserService {
             if(fullname != '') user.fullname = fullname
             if(email != '') user.email = email
             if(password != '') user.password = password
-            if(profile_picture != '') user.profile_picture = profile_picture
+            if(image !== '' && profile_picture != '') user.profile_picture = image
             if(profile_description != '') user.profile_description = profile_description
             
             

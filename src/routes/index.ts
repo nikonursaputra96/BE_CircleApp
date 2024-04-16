@@ -23,7 +23,7 @@ const Route = express.Router()
     Route.get("/user" , UserController.find)
     Route.get("/user/:id" , UserController.findById)
     Route.post("/user" , UserController.create)
-    Route.patch("/user/:id" , UserController.update)
+    Route.patch("/user/:id" ,upload('image') , UserController.update)
     Route.delete("/user/:id" , UserController.delete)
     // Replies
     Route.get("/replies" , RepliesController.find)

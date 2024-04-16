@@ -22,12 +22,16 @@ class ThreadWorker {
 
                     const payload = JSON.parse(message.content.toString())
                     
+                    let imageURL: string | undefined
+
+                    if (payload.image) {
+                        const cloudinaryResponse = await cloudinary.uploader.upload("src/assets/" + payload.image)
+                        const imageURL = cloudinaryResponse.secure_url
+                    }
     
-                    const cloudinaryResponse = await cloudinary.uploader.upload("src/assets/" + payload.image)
-                    const imageURL = cloudinaryResponse.secure_url
                     const thread = this.threadsRepository.create({
                         content: payload.value.content,
-                        image: imageURL,
+                        image: imageURL  ,
                         user: {id: payload.loginSession.id}
                     });
                     await this.threadsRepository.save(thread)
